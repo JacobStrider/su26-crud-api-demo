@@ -89,8 +89,12 @@ Before you begin, ensure you have installed:
 
    ```bash
    git clone <repository-url>
+   ```
+
+   ```bash
    cd su26-crud-api-demo
    ```
+
 
 2. **Database Configuration (Neon.tech Serverless PostgreSQL)**
 
