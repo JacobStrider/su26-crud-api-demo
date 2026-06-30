@@ -15,11 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/posts")
-public class PostController {
+public class PostApiController {
 
   private final PostService postService;
 
-  public PostController(PostService postService) {
+  public PostApiController(PostService postService) {
     this.postService = postService;
   }
 
@@ -71,8 +71,8 @@ public class PostController {
   }
 
   @GetMapping("/search")
-  public ResponseEntity<List<Post>> searchPosts(@RequestParam String keyword) {
-    List<Post> posts = postService.searchPosts(keyword);
+  public ResponseEntity<List<Post>> searchPosts(@RequestParam String query) {
+    List<Post> posts = postService.searchPosts(query);
     return ResponseEntity.ok(posts);
   }
 
