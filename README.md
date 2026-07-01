@@ -1,6 +1,7 @@
 # su26-crud-api-demo
 
 A comprehensive RESTful API for managing blog post records, built with Spring Boot, Spring Data JPA, and PostgreSQL.
+Primed for deployment in cloud environments using docker and neon.tech serverless PostgreSQL.
 
 ## Table of Contents
 
@@ -44,6 +45,8 @@ This is a CRUD (Create, Read, Update, Delete) API that manages blog post records
 | **Hibernate**       | Latest  | JPA implementation                     |
 | **PostgreSQL**      | Latest  | Relational database                    |
 | **Maven**           | Latest  | Build and dependency management        |
+| **Lombok**          | Latest  | Reduces boilerplate code               |
+| **docker**          | Latest  | Containerization                       |
 
 ### Java - [Spring ORM with JPA and Hibernate](https://medium.com/@burakkocakeu/jpa-hibernate-and-spring-data-jpa-efa71feb82ac)
 
@@ -68,128 +71,55 @@ This is a CRUD (Create, Read, Update, Delete) API that manages blog post records
 
 ### Prerequisites
 
-Before you begin, ensure you have installed:
+Before you begin, ensure you:
 
-1. **Java 25 JDK**
-   - Download from [Oracle Java](https://www.oracle.com/java/technologies/downloads/) or use a package manager
-   - Verify installation: `java -version`
-
-2. **Neon.tech PostgreSQL Database** (Cloud-based, Serverless)
+1. **Neon.tech PostgreSQL Database** (Cloud-based, Serverless)
    - This project uses [Neon.tech](https://neon.tech), a serverless PostgreSQL database in the cloud
    - You don't need to install PostgreSQL locally
    - Sign up for a free account at [Neon.tech](https://neon.tech)
    - You only need an internet connection to connect to the database
 
-3. **Git** (optional, for cloning the project)
-   - Download from [Git Official Site](https://git-scm.com/)
+3. **GitHub** (for forking the project)
+   - Sign up for a free account at [GitHub](https://github.com/)
+
+4. **Render** (for deployment)
+   - Sign up for a free account at [Render](https://render.com/)
+   - Render is a cloud platform that allows you to deploy web applications easily
 
 ### Setup Instructions
 
-1. **Clone or Download the Project**
-
-   ```bash
-   git clone <repository-url>
-   ```
-
-   ```bash
-   cd su26-crud-api-demo
-   ```
+1. **Create a Fork of the Repository**
+   1. Go to the GitHub repository: [su26-crud-api-demo](https://github.com/su26/su26-crud-api-demo)
+   2. Click the **Fork** button in the top-right corner to create your own copy of the repository
+   3. Copy all branches, not just the main branch.
 
 
 2. **Database Configuration (Neon.tech Serverless PostgreSQL)**
-
-   #### Step 1: Get Your Neon.tech Connection String
    1. Navigate to [Neon.tech](https://neon.tech)
    2. Sign in to your account
    3. In your project dashboard, find your connection string
    4. It will look like: `jdbc:postgresql://project-name.c-2.us-east-1.aws.neon.tech/neondb?user:5432/dbname?user==neondb_owner&password=your_password_here`
+   5.  Copy this connection string for later use in environent variables.
 
-   #### Step 2: Stop Tracking `application.properties` Locally
+3. **Deploying on Render**
 
-   To prevent accidentally committing your database credentials to Git, use `git skip-worktree` to exclude your local copy:
+   #### Step 1: Create a New Web Service on Render
+   1. Go to [Render](https://render.com/)
+   2. Sign in to your account
+   3. Click **New** → **Web Service**
+   4. Connect your GitHub account and select the forked repository, or paste the repository URL.
+   5. Under **Language**, select **docker**.
+   6. Choose the branch you want to deploy (e.g., `crud-api-for-docker`)
+   7. Set the dockerfile path to `./dockerfile`.
+   8. Be sure to select the free plan for deployment.
+   9. Under **Environment Variables**, add the following variable:
+      - Key: `SPRING_DATASOURCE_URL`
+      - Value: Your Neon.tech connection string (from step 2)
+   10. Click **Create Web Service** to deploy your application.
 
-   ```bash
-   git update-index --skip-worktree src/main/resources/application.properties
-   ```
-
-   This tells Git to ignore any changes you make to this file locally. You can now safely edit the file without worrying about committing sensitive data.
-
-   #### Step 3: Update Your Connection String
-
-   Edit `src/main/resources/application.properties` and add your Neon.tech PostgreSQL connection string:
-
-   ```properties
-   spring.application.name=crud-api
-   spring.datasource.url=YOUR NEON CONNECTION STRING
-   spring.jpa.hibernate.ddl-auto=update
-
-   #Log out sql queries
-   logging.level.org.hibernate.SQL=DEBUG
-   logging.level.org.hibernate.orm.jdbc.bind=TRACE
-   ```
-
-   Replace with your actual Neon.tech credentials (e.g., `some-cool-projectName-pooler.c-7.us-east-1.aws.neon.tech//neondb?user=neondb_owner&password=your_password_here&sslmode=require&channelBinding=require`).
-
-   #### To Resume Tracking the File
-
-   If you need to revert and track the file again:
-
-   ```bash
-   git update-index --no-skip-worktree src/main/resources/application.properties
-   ```
-
-   **Important Note**: This approach (using `git skip-worktree`) keeps credentials safe locally while the file can be tracked in Git. However, in production environments, database credentials should be managed using environment variables or cloud-based secret management services like AWS Secrets Manager or Azure Key Vault.
-
-## Running the Application
-
-### Using Maven Wrapper
-
-**On Windows CMD**:
-
-```cmd
-mvnw.cmd spring-boot:run
-```
-
-**On Mac/Linux (bash, powershell, zsh**):
-
-```bash
-./mvnw spring-boot:run
-```
-
-The application will start on **http://localhost:8080**
-
-You should see output like:
-
-```
-Started CrudApiApplication in 4.532 seconds
-```
-
-### Using VS Code GUI
-
-1. **Open the Project**: Open the project folder in VS Code
-2. **Install Extension**: Install the "Extension Pack for Java" (by Microsoft) if not already installed
-3. **Run the Application**:
-   - Go to the Explorer view (left sidebar)
-   - Navigate to `src > main > java > com > csc340 > crud_api > CrudApiApplication.java`
-   - Right-click on `CrudApiApplication.java`
-   - Select **"Run Java"** or click the ▶️ **Run** button that appears above the class definition
-4. **View Output**: The terminal will show the Spring Boot startup messages and confirm the application is running
-
-### Using IntelliJ IDEA GUI
-
-1. **Open the Project**: Open the project folder in IntelliJ IDEA (it will recognize it as a Maven project)
-2. **Configure JDK**:
-   - Go to **File → Project Structure → Project**
-   - Set the Project SDK to Java 25
-3. **Run the Application**:
-   - Navigate to `src > main > java > com > csc340 > crud_api > CrudApiApplication.java` in the Project Explorer
-   - Right-click on `CrudApiApplication.java`
-   - Select **"Run 'CrudApiApplication.main()'"** or click the ▶️ **Run** button next to the class name
-4. **View Output**: The Run window at the bottom will show Spring Boot startup messages and confirm the application is running
-
-### Stopping the Application
-
-Press `Ctrl+C` in your terminal to stop the running application. If using IDE GUI, click the ⏹️ **Stop** button in the Run/Debug toolbar.
+   #### Step 2: Access Your Deployed Application
+   - Once the deployment is complete, Render will provide you with a URL for your application.
+   - You can access the API endpoints using this URL, e.g., `https://your-app-name.onrender.com/api/posts`.
 
 ---
 
@@ -204,7 +134,8 @@ src/main/java/com/csc340/crud_api/
 │   ├── Post.java                    # Entity/model class representing a blog post
     ├── PostRepository.java          # Database access layer using Spring Data JPA
     ├── PostService.java             # Service layer for business logic
-    └── PostApiController.java       # REST controller handling HTTP requests
+    ├── PostApiController.java       # REST controller handling HTTP requests
+    └── AppController.java             # Main controller for handling the root endpoint
 
 src/main/resources/
 └── application.properties           # Configuration file
