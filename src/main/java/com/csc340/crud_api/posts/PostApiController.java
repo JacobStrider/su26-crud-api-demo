@@ -1,7 +1,9 @@
 package com.csc340.crud_api.posts;
 
+import java.util.Collections;
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,6 +33,9 @@ public class PostApiController {
   @GetMapping
   public ResponseEntity<List<Post>> getAllPosts() {
     List<Post> posts = postService.getAllPosts();
+    if (posts.isEmpty()) {
+      return ResponseEntity.ok(Collections.emptyList());
+    }
     return ResponseEntity.ok(posts);
   }
 
@@ -73,12 +78,18 @@ public class PostApiController {
   @GetMapping("/search")
   public ResponseEntity<List<Post>> searchPosts(@RequestParam String query) {
     List<Post> posts = postService.searchPosts(query);
+    if (posts.isEmpty()) {
+      return ResponseEntity.ok(Collections.emptyList());
+    }
     return ResponseEntity.ok(posts);
   }
 
   @GetMapping("/author")
   public ResponseEntity<List<Post>> getPostsByAuthor(@RequestParam String name) {
     List<Post> posts = postService.getPostsByAuthor(name);
+    if (posts.isEmpty()) {
+      return ResponseEntity.ok(Collections.emptyList());
+    }
     return ResponseEntity.ok(posts);
   }
 
