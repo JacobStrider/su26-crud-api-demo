@@ -1,7 +1,7 @@
 # su26-crud-api-demo
 
-A comprehensive RESTful API for managing blog post records, built with Spring Boot, Spring Data JPA, and PostgreSQL.
-Primed for deployment in cloud environments using docker and neon.tech serverless PostgreSQL.
+A comprehensive ~~RESTful API~~ MVC application for managing blog post records, built with Spring Boot, Spring Data JPA, and PostgreSQL.
+This project demonstrates fundamental concepts for building both REST APIs and web interfaces with Spring Boot.
 
 ## Table of Contents
 
@@ -18,12 +18,13 @@ Primed for deployment in cloud environments using docker and neon.tech serverles
 
 # What is This Project?
 
-This is a CRUD (Create, Read, Update, Delete) API that manages blog post records. It demonstrates:
+This is a CRUD (Create, Read, Update, Delete) MVC Application that manages blog post records. It demonstrates:
 
 - How to build a REST API with Spring Boot
 - How to connect to a PostgreSQL database using JPA
 - How to structure a Spring Boot application with layers (Controller, Service, Repository)
 - How to handle HTTP requests and responses
+- How to render web pages with FreeMarker templates
 - How to perform database operations
 
 **CRUD:**
@@ -42,6 +43,7 @@ This is a CRUD (Create, Read, Update, Delete) API that manages blog post records
 | **Java**            | 25      | Programming language                   |
 | **Spring Boot**     | 4.1.0   | Framework for building the application |
 | **Spring Data JPA** | Latest  | ORM layer for database access          |
+| **FreeMarker**      | Latest  | Template engine for rendering views    |
 | **Hibernate**       | Latest  | JPA implementation                     |
 | **PostgreSQL**      | Latest  | Relational database                    |
 | **Maven**           | Latest  | Build and dependency management        |
@@ -65,6 +67,8 @@ This is a CRUD (Create, Read, Update, Delete) API that manages blog post records
 
 **lombok**: Reduces boilerplate code by generating getters, setters, constructors, and other methods at compile time.
 
+**freemarker**: Template engine for rendering dynamic HTML pages.
+
 ---
 
 ## Installation & Setup
@@ -79,10 +83,10 @@ Before you begin, ensure you:
    - Sign up for a free account at [Neon.tech](https://neon.tech)
    - You only need an internet connection to connect to the database
 
-3. **GitHub** (for forking the project)
+2. **GitHub** (for forking the project)
    - Sign up for a free account at [GitHub](https://github.com/)
 
-4. **Render** (for deployment)
+3. **Render** (for deployment)
    - Sign up for a free account at [Render](https://render.com/)
    - Render is a cloud platform that allows you to deploy web applications easily
 
@@ -93,13 +97,12 @@ Before you begin, ensure you:
    2. Click the **Fork** button in the top-right corner to create your own copy of the repository
    3. Copy all branches, not just the main branch.
 
-
 2. **Database Configuration (Neon.tech Serverless PostgreSQL)**
    1. Navigate to [Neon.tech](https://neon.tech)
    2. Sign in to your account
    3. In your project dashboard, find your connection string
    4. It will look like: `jdbc:postgresql://project-name.c-2.us-east-1.aws.neon.tech/neondb?user:5432/dbname?user==neondb_owner&password=your_password_here`
-   5.  Copy this connection string for later use in environent variables.
+   5. Copy this connection string for later use in environent variables.
 
 3. **Deploying on Render**
 
@@ -135,6 +138,7 @@ src/main/java/com/csc340/crud_api/
     ├── PostRepository.java          # Database access layer using Spring Data JPA
     ├── PostService.java             # Service layer for business logic
     ├── PostApiController.java       # REST controller handling HTTP requests
+    ├── PostUiController.java        # Controller for rendering web pages with FreeMarker templates.
     └── AppController.java             # Main controller for handling the root endpoint
 
 src/main/resources/
@@ -152,9 +156,11 @@ This project follows a layered architecture pattern, separating concerns into di
                  │
 ┌────────────────▼────────────────────┐
 │ Controller Layer                    │
-| (PostApiController.java)            │
+| (PostApiController.java    &        |
+|   PostUiController.java)            │
 │ - Handles HTTP requests/responses   │
-│ - Maps URLs to methods(endpoints)   │
+│ - API: Returns JSON responses       │
+| - UI: Renders views using templates │
 └────────────────┬────────────────────┘
                  │
 ┌────────────────▼────────────────────┐
@@ -175,272 +181,60 @@ This project follows a layered architecture pattern, separating concerns into di
 │ Database                            │
 │ (PostgreSQL)                        │
 └─────────────────────────────────────┘
-
-````
+```
 
 ## API Endpoints
 
-All endpoints use the base URL: `http://localhost:8080/api/posts`
+- `GET /api/posts`: Get all blog posts
+- `GET /api/ posts`: Render the form to create a new post
+- `POST /api/posts`: Create a new post
+- `GET /api/posts/{id}`: Get a specific blog post
+- `PUT /api/posts/{id}`: Update an existing post
+- `DELETE /api/posts/{id}`: Delete a blog post
 
-### 1. Get All Posts
+## Web UI Routes
 
-```http
-GET /api/posts
-````
+- `GET /posts`: View all blog posts
+- `GET /posts/new`: Render the form to create a new post
+- `POST /posts`: Submit the form to create a new post
+- `GET /posts/{id}`: View a specific blog post
+- `POST /posts/update/{id}`: Submit the form to update an existing post
+- `GET /posts/delete/{id}`: Delete a blog post
 
-**Response:**
+---
 
-```json
-[
-  {
-    "id": 1,
-    "title": "First Post",
-    "author": "John Doe",
-    "content": "This is the content of the first post."
-  },
-  {
-    "id": 2,
-    "title": "Second Post",
-    "author": "Jane Smith",
-    "content": "This is the content of the second post."
-  }
-]
-```
+### MVC (Model-View-Controller) Pattern
 
-### 2. Get Post by ID
+Spring MVC is a web framework that follows the MVC architectural pattern:
 
-```http
-GET /api/posts/{id}
-```
-
-**Response:**
-
-```json
-{
-  "id": 1,
-  "title": "First Post",
-  "author": "John Doe",
-  "content": "This is the content of the first post."
-}
-```
-
-### 3. Create a New Post
-
-```http
-POST /api/posts
-request body:
-{
-  "title": "New Post",
-  "author": "Alice Johnson",
-  "content": "This is the content of the new post."
-}
-```
-
-**Response:**
-
-```json
-{
-  "id": 3,
-  "title": "New Post",
-  "author": "Alice Johnson",
-  "content": "This is the content of the new post."
-}
-```
-
-### 4. Update an Existing Post
-
-```http
-PUT /api/posts/{id}
-request body:
-{
-  "title": "Updated Post Title",
-  "author": "John Doe",
-  "content": "This is the updated content of the post."
-}
-```
-
-**Response:**
-
-```json
-{
-  "id": 1,
-  "title": "Updated Post Title",
-  "author": "John Doe",
-  "content": "This is the updated content of the post."
-}
-```
-
-### 5. Delete a Post
-
-```http
-DELETE /api/posts/{id}
-```
-
-**Response:** <Empty>
-
-### 6. Search Posts by Title or Content
-
-```http
-GET /api/posts/search?query={searchTerm}
-```
-
-**Response:**
-
-```json
-[
-  {
-    "id": 1,
-    "title": "First Post",
-    "author": "John Doe",
-    "content": "This is the content of the first post."
-  }
-]
-```
-
-### 7. Search Posts by Author
-
-```http
-GET /api/posts/search?author={authorName}
-```
-
-**Response:**
-
-```json
-[
-  {
-    "id": 2,
-    "title": "Second Post",
-    "author": "Jane Smith",
-    "content": "This is the content of the second post."
-  }
-]
-```
-
-## Key Spring Boot Concepts
-
-### What is Spring Boot?
-
-Spring Boot is a framework that simplifies building production-ready Spring applications. It provides:
-
-- Auto-configuration of Spring application based on jar dependencies
-- Embedded web server (Tomcat) - no need to deploy WAR files
-- Convention over configuration - sensible defaults
-- Easy integration with databases and other services
-
-### @RestController and @RequestMapping
+- **Model**: Represents the data (Student entity, service responses)
+- **View**: The presentation layer (FreeMarker templates that render HTML)
+- **Controller**: Handles user requests, processes them, and returns appropriate responses
 
 ```java
-@RestController
-@RequestMapping("/api/posts")
-public class PostApiController {
-    // Controller methods here
+@Controller // Handles web requests and returns views
+@GetMapping("/posts")
+public String getAllPosts(Model model) {
+  model.addAttribute("posts", postService.getAllPosts());
+  return "posts";
 }
-```
 
-- `@RestController`: Indicates that this class is a REST controller, capable of handling HTTP requests and returning JSON responses.
-- `@RequestMapping("/api/posts")`: All endpoints in this class start with `/api/posts`.
-
-### HTTP Mapping Annotations
-
-- `@GetMapping`: Handles GET requests (retrieve data)
-- `@PostMapping`: Handles POST requests (create data)
-- `@PutMapping`: Handles PUT requests (update data)
-- `@DeleteMapping`: Handles DELETE requests (delete data)
-- `ResponseEntity`: Represents the entire HTTP response, including status code, headers, and body.
-- `@RequestParam`: Binds query parameters from the URL to method parameters.
-- `@RequestBody`: Binds the request body (JSON) to a Java object.
-
-### @Service and Dependency Injection
-
-```java
-@Service
-public class PostService {
-    private final PostRepository postRepository;
-
-    @Autowired
-    public PostService(PostRepository postRepository) {
-        this.postRepository = postRepository;
+@RestController// Handles API requests and returns JSON objects
+  @GetMapping
+  public ResponseEntity<List<Post>> getAllPosts() {
+    List<Post> posts = postService.getAllPosts();
+    if (posts.isEmpty()) {
+      return ResponseEntity.ok(Collections.emptyList());
     }
-}
+    return ResponseEntity.ok(posts);
+  }
 ```
-
-- `@Service`: Indicates that this class contains business logic and is a service component.
-- Dependency Injection: Spring automatically injects the `PostRepository` into the `PostService` constructor, allowing us to use it without manually instantiating it.
-
-### Spring Data JPA Repository
-
-```java
-public interface PostRepository extends JpaRepository<Post, Long> {
-    List<Post> findByTitleContainingIgnoreCaseOrContentContainingIgnoreCase(String title, String content);
-    List<Post> findByAuthorIgnoreCase(String author);
-}
-```
-
-- `JpaRepository<Post, Long>`: Provides CRUD operations and query methods for the `Post` entity.
-- Spring automatically generates implementations for these methods based on their names.
-- `findByAuthorIgnoreCase`: Genarates a query like
-
-```sql
-SELECT * FROM posts WHERE UPPER(author) = UPPER(?)
-```
-
-### @Entity and JPA Annotations
-
-```java
-@Entity
-public class Post {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(nullable = false)
-    private String title;
-
-    @Column(nullable = false)
-    private String author;
-
-    @Column(columnDefinition = "TEXT")
-    private String content;
-}
-```
-
-- `@Entity`: Marks this class as a JPA entity, representing a table in the database.
-- `@Id`: Specifies the primary key of the entity.
-- `@GeneratedValue`: Configures how the primary key is generated (e.g., auto-increment).
-- `@Column`: Specifies column properties, such as nullability and data type.
-
----
-
-## Database Schema
-
-The application uses a single table to store student data:
-
-### POSTS Table
-
-| Column    | Type         | Constraints | Description                     |
-| --------- | ------------ | ----------- | ------------------------------- |
-| `id`      | BIGINT       | PRIMARY KEY | Unique identifier for each post |
-| `title`   | VARCHAR(255) | NOT NULL    | Title of the blog post          |
-| `author`  | VARCHAR(255) | NOT NULL    | Author of the blog post         |
-| `content` | TEXT         |             | Content of the blog post        |
-
-**Note**: This schema is automatically created by Hibernate based on the entity class when `spring.jpa.hibernate.ddl-auto=update` is set in `application.properties`.
-
----
-
-## Testing the API
-
-### Using Postman/Echo API/Bruno (GUI)
-
-1. Create a new request
-2. Select HTTP method (GET, POST, PUT, DELETE)
-3. Enter the URL (e.g., `http://localhost:8080/api/posts`)
-4. If POST/PUT, go to "Body" tab → select "raw" and "JSON"
-5. Enter JSON data and click "Send"
-
----
 
 ## Common Issues and Solutions
+
+### Issue: Whitelabel Error Page instead of a view
+
+**Solution**: Check that the name of the view being returned is spelled correctly.
 
 ### Issue: Port 8080 is already in use
 
