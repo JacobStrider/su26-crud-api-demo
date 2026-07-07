@@ -3,17 +3,6 @@
 A comprehensive ~~RESTful API~~ MVC application for managing blog post records, built with Spring Boot, Spring Data JPA, and PostgreSQL.
 This project demonstrates fundamental concepts for building both REST APIs and web interfaces with Spring Boot.
 
-## Table of Contents
-
-- [What is This Project?](#what-is-this-project)
-- [Technology Stack](#technology-stack)
-- [Installation & Setup](#installation--setup)
-- [Running the Application](#running-the-application)
-- [Project Architecture](#project-architecture)
-- [API Endpoints](#api-endpoints)
-- [Key Spring Boot Concepts](#key-spring-boot-concepts)
-- [Database Schema](#database-schema)
-
 ---
 
 # What is This Project?
