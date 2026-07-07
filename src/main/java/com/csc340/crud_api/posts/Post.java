@@ -39,10 +39,13 @@ public class Post {
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
   private LocalDateTime createdAt;
 
-  public Post(String title, String content, String author) {
+  private String thumbnailUrl;
+
+  public Post(String title, String content, String author, String thumbnailUrl) {
     this.title = title;
     this.content = content;
     this.author = author;
+    this.thumbnailUrl = thumbnailUrl;
   }
 
   @PrePersist
